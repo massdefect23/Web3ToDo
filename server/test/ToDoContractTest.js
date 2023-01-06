@@ -41,7 +41,7 @@ describe("ToDo Contract", function() {
 
     describe("Get All Tasks", function() {
         it("should return the correct number of total tasks", async function() {
-            const todoFromChain = await todoContract.getMyTasks();
+            const todoFromChain = await todoContract.getTask();
             expect(todoFromChain.length).to.equal(NUM_TOTAL_TASKS);
         })
     })
@@ -52,7 +52,7 @@ describe("ToDo Contract", function() {
             const TASK_DELETED = true;
 
             await expect(
-                ToDoContract.deleteTask(TASK_ID, TASK_DELETED)
+                todoContract.deleteTask(TASK_ID, TASK_DELETED)
             ).to.emit(
                 todoContract, 'DeleteTask'
             ).withArgs(
@@ -60,4 +60,4 @@ describe("ToDo Contract", function() {
             );
         })
     })
-})
+});

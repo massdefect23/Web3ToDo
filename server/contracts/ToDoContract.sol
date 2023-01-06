@@ -7,23 +7,24 @@ contract ToDoContract {
 
     struct Task {
         uint id;
+        address username;
         string taskText;
         bool isDeleted;
     }
 
     Task[] private tasks;
 
-    mapping(uint => address) taskToOwner;
+    mapping(uint256 => address) taskToOwner;
 
-    function addTask(string memory, taskText, bool isDeleted) external {
+    function addTask(string memory taskText, bool isDeleted) external {
         uint taskId = tasks.length;
-        tasks.push(Task(taskId, taskText, isDeleted));
-        taskToOwner(taskId) = msg.sender;
+        tasks.push(Task(taskId, msg.sender, taskText, isDeleted));
+        taskToOwner[taskId] = msg.sender;
         emit AddTask(msg.sender, taskId);
     }
 
     function getTask() external view returns (Task[] memory) {
-        Task[] memory temporary = new task[](tasks.length);
+        Task[] memory temporary = new Task[](tasks.length);
         uint counter = 0;
         for(uint i=0; i<tasks.length; i++) {
             if(taskToOwner[i] == msg.sender && tasks[i].isDeleted == false) {

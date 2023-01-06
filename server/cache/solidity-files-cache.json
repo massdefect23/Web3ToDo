@@ -1,0 +1,40 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/ciaranmacdonald/Development/Blockchain/Web3/ToDo/server/contracts/ToDoContract.sol": {
+      "lastModificationDate": 1673046821351,
+      "contentHash": "7049a19d04a430a374b6318d7d6bdc0b",
+      "sourceName": "contracts/ToDoContract.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.17"
+      ],
+      "artifacts": [
+        "ToDoContract"
+      ]
+    }
+  }
+}
