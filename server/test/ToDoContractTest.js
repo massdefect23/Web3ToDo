@@ -28,7 +28,7 @@ describe("ToDo Contract", function() {
     });
 
     describe("Add Task", function() {
-        if("should emit AddTask event", async function() {
+        it("should emit AddTask event", async function() {
             let task = {
                 'taskText': 'New Task',
                 'isDeleted': false,
