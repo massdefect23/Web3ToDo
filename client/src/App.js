@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
-import Task from "./Task";
+import ToDo from "./ToDo";
 import "./App.css";
 import { ToDoContractAddress } from "./config.js";
 import { ethers } from "ethers";
@@ -12,41 +12,132 @@ function App() {
   const [currentAccount, setCurrentAccount] = useState("");
   const [correctNetwork, setCorrectNetwork] = useState(false);
 
+  const getAllToDos = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const ToDoContract = new ethers.Contract(
+          ToDoContractAddress,
+          TaskAbi.abi,
+          signer
+        );
+
+        let allTasks = await ToDoContract.getMyTasks();
+        setTasks(allTasks);
+      } else {
+        console.log("Ethereum object not found...");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllToDos();
+  }, []);
+
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
+
       if (!ethereum) {
-        console.log("Metamask not found");
+        console.log("Metamask not detected");
         return;
       }
       let chainId = await ethereum.request({ method: "eth_chainId" });
+      console.log("Connected to chain:" + chainId);
 
-      const goerliChainId = 0x5;
+      const goerliChainId = "0x5";
 
       if (chainId !== goerliChainId) {
+        alert("You are not connected to Goerli");
         return;
       } else {
         setCorrectNetwork(true);
       }
+
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
+
+      console.log("Found account", accounts[0]);
       setCurrentAccount(accounts[0]);
-    } catch (error) {}
+    } catch (error) {
+      console.log("Error connecting to Metamask", error);
+    }
   };
 
-  const addTask = async(e) => {
-    
-  }
+  const addTask = async (e) => {
+    e.preventDefault();
 
-  const deleteTask = async() => {
-  }
+    let task = {
+      taskText: input,
+      isDeleted: false,
+    };
+
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const TaskContract = new ethers.Contract(
+          ToDoContractAddress,
+          TaskAbi.abi,
+          signer
+        );
+
+        TaskContract.addTask(task.taskText, task.isDeleted)
+          .then((response) => {
+            setTasks([...tasks, task]);
+            console.log("Completed Task");
+          })
+          .catch((err) => {
+            console.log("Error");
+          });
+      } else {
+        console.log("Ethereum object not found...");
+      }
+    } catch (error) {
+      console.log("Error submitting new item", error);
+    }
+
+    setInput("");
+  };
+
+  const deleteTask = (key) => async () => {
+    console.log(key);
+
+    // Now we got the key, let's delete our tweet
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const TaskContract = new ethers.Contract(
+          ToDoContractAddress,
+          TaskAbi.abi,
+          signer
+        );
+
+        // let deleteTaskTx = await TaskContract.deleteTask(key, true);
+        let allTasks = await TaskContract.getMyTasks();
+        setTasks(allTasks);
+      } else {
+        console.log("Ethereum object not found...");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     connectWallet();
   }, []);
-
-
 
   return (
     <div>
@@ -76,7 +167,7 @@ function App() {
           </form>
           <ul>
             {tasks.map((item) => (
-              <Task
+              <ToDo
                 key={item.id}
                 taskText={item.taskText}
                 onClick={deleteTask(item.id)}
